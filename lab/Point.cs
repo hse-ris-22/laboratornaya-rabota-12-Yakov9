@@ -9,17 +9,17 @@ namespace lab
 {
     public class Point<T>
     {
-        public Person? Data { get; set; }
+        public T? Data { get; set; }
         public Point<T>? Next {get; set;}
         public Point<T>? Prev { get; set; }
         public Point()
         {
-            Data = null;
+            Data = default(T);
             Next = null;
             Prev = null;
         }
 
-        public Point(Person p)
+        public Point(T p)
         {
             Data = p;
             Next = null;

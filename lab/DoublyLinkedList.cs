@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,108 +8,129 @@ using ClassLibrary1;
 
 namespace lab
 {
-    public class DoublyLinkedList<T>
+    public class DoublyLinkedList<T> where T : ICloneable
     {
         //первый элемент списка
-        public Point<Person>? Beg { get; set; }
+        public Point<T>? Beg { get; set; }
         //последний элемент списка
-        public Point<Person>? End { get; set; }
-        public int length;
-
-        /// <summary>
-        /// правила для длины списка
-        /// </summary>
-        public int Length
-        {
-            get => length;
-            set
-            {
-                if (value >= 0)
-                    length = value;
-                else
-                {
-                    length = 0;
-                }
-            }
-        }
-
-        /// <summary>
-        /// создание элемента списка рандомом
-        /// </summary>
-        /// <returns></returns>
-        public static Point<Person> MakePointPerson()
-        {
-            Person person = new Person();
-            person.RandomInit(); //инициализируем человека
-            Point<Person> p = new Point<Person>(person);
-            return p;
-        }
+        public Point<T>? End { get; set; }
+        //длина списка
+        public int Length { get; set; }
 
 
         /// <summary>
         /// конструктор с параметром длины
         /// </summary>
         /// <param name="length"></param>
-        public DoublyLinkedList(int length)
+        public DoublyLinkedList(T data)
         {
-            Length = length;
-            if (length == 0) //проверка длины
+            Length = 1;
+            Point<T> beg = new Point<T>(data); //создаем первый элемент
+            //for (int i = 1; i < length; i++) //добавляем(присоединяем) остальные элементы
+            //{
+            //    Point<Person> p = MakePointPerson();
+            //    r.Next = p;
+            //    p.Prev = r;
+            //    r = p;
+            //}
+            Beg = beg;
+            End = beg;
+        }
+
+        /// <summary>
+        /// добавление элемента в список
+        /// </summary>
+        /// <param name="element"></param>
+        public void AddElement(T element)
+        {
+            Point<T>? p = new Point<T>(element);
+            Point<T>? t = this.End;
+            this.End.Next = p;
+            this.End = p;
+            this.End.Prev = t;
+            Length++;
+        }
+
+        /// <summary>
+        /// удаление элемента из списка
+        /// </summary>
+        /// <param name="p"></param>
+        public void DeleteElement(Point<T> p)
+        {
+            if (this.Length == 1) //удаление единственного элемента списка
             {
-                Beg = null;
-                End = null;
+                this.Beg = null;
+                this.End = null;
             }
-            else
+            else if (p?.Prev is null) //удаление первого элемента списка
             {
-                Point<Person> beg = MakePointPerson(); //создаем первый элемент
-                Point<Person> r = beg;
-                for (int i = 1; i < length; i++) //добавляем(присоединяем) остальные элементы
-                {
-                    Point<Person> p = MakePointPerson();
-                    r.Next = p;
-                    p.Prev = r;
-                    r = p;
-                }
-                Beg = beg;
-                End = r;
+                this.Beg = this.Beg?.Next;
+                this.Beg.Prev = null;
             }
+            else if (p?.Next is null) //удаление последнего элемента списка
+            {
+                this.End = this.End?.Prev;
+                this.End.Next = null;
+            }
+            else //удаление элемента в середине
+            {
+                p.Next.Prev = p?.Prev;
+                p.Prev.Next = p?.Next;
+            }
+            Length--;
+        }
+
+        /// <summary>
+        /// удаление списка из памяти
+        /// </summary>
+        /// <param name="list"></param>
+        public void RemoveListFromMemory()
+        {
+            this.Beg.Data = default(T);
+            this.Beg.Next = null;
+            this.Beg.Prev = null;
+            this.End.Data = default(T);
+            this.End.Next = null;
+            this.End.Prev = null;
+            this.Length = 0;
         }
 
 
+        [ExcludeFromCodeCoverage]
         /// <summary>
         /// вывод списка
         /// </summary>
         public void ShowList()
         {
-            if (this.length <= 0) //проверка длины
+            if (this.Length <= 0) //проверка длины
             {
                 Console.WriteLine("Список пуст");
             }
             else
             {
                 Console.WriteLine("Ваш список:");
-                Point<Person>? p = Beg;
+                Point<T>? p = Beg;
                 while (p!=null)
                 {
                     Console.WriteLine(p);
-                    p = p.Next;
+                    p = p?.Next;
                 }
             }
         }
 
-        //public static object Clone<Person>(DoublyLinkedList<Person> list)
-        //{
-        //    DoublyLinkedList<Person> newList = new DoublyLinkedList<Person>(Length);
-        //    Point<Person>? pOld = Beg; 
-        //    Point<Person>? pNew = newList.Beg;
-        //    while (pNew is not null)
-        //    {
-        //        pNew.Data = (T)pOld.Data.Clone();
-        //        pNew = pNew?.Next;
-        //        pOld = pOld?.Next;
-        //    }
-        //    newList.Beg.Person.Age = 50;
-        //    ShowList();
-        //    return newList;
-        //}
+        /// <summary>
+        /// клонирование списка
+        /// </summary>
+        /// <returns></returns>
+        public DoublyLinkedList<T> Clone()
+        {
+            DoublyLinkedList<T> newList = new DoublyLinkedList<T>((T)this.Beg.Data.Clone());
+            Point<T>? pOld = Beg.Next;
+            for (int i = 0; i < Length -1; i++, pOld = pOld.Next)
+            {
+                newList.AddElement((T)pOld.Data.Clone());
+            }
+            return newList;
+        }
     }
 }

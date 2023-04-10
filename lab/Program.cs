@@ -1,9 +1,11 @@
 ﻿using ClassLibrary1;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace lab
 {
+    [ExcludeFromCodeCoverage]
     internal class Program
     {
         /// <summary>
@@ -23,45 +25,27 @@ namespace lab
         /// </summary>
         /// <param name="list"></param>
         /// <param name="name"></param>
-        static void DeleteLastPersonByName(ref DoublyLinkedList<Person>? list, string? name)
+        static void DeleteLastPersonByName(ref DoublyLinkedList<Person>? list)
         {
-            if (list?.length <= 0) //проверка длины списка
+            if (list?.Length <= 0) //проверка длины списка
                 Console.WriteLine("Ваш список пуст");
-            Point<Person>? p = list.End;
+            Console.WriteLine("Впишите имя человека, которого хотите удалить из списка");
+            string? name = Console.ReadLine(); //ввод имени человека для удаления
+            Point<Person>? p = list?.End;
             bool isFound = false;
-            for (int i = list.length; i > 0; i--, p = p?.Prev)
+            for (int i = list.Length; i > 0; i--, p = p?.Prev)
             {
-                if (p?.Data.Name == name)
+                if (p?.Data?.Name == name)
                 {
-                    if (list.length == 1) //удаление единственного элемента списка
-                    {
-                        list.Beg = null;
-                        list.End = null;
-                    }
-                    else if (p?.Prev is null) //удаление первого элемента списка
-                    {
-                        list.Beg = list.Beg?.Next;
-                        list.Beg.Prev = null;
-                    }
-                    else if (p?.Next is null) //удаление последнего элемента списка
-                    {
-                        list.End = list.End?.Prev;
-                        list.End.Next = null;
-                    }
-                    else //удаление элемента в середине
-                    {
-                        p.Next.Prev = p.Prev;
-                        p.Prev.Next = p.Next;
-                    }
+                    list?.DeleteElement(p); //удаление элементов
                     isFound = true;
-                    list.length--;
                 }
             }
             if (!isFound) //если элемент был не найден
                 Console.WriteLine($"Элемент c именем {name} не был найден в списке");
             else
             {
-                if (list.length == 0) //если единственный элемент был удален
+                if (list?.Length == 0) //если единственный элемент был удален
                     Console.WriteLine($"Элемент c именем {name} был удален. Ваш список теперь пуст.");
                 else
                     Console.WriteLine($"Элемент c именем {name} был удален.");
@@ -69,13 +53,51 @@ namespace lab
         }
 
         /// <summary>
+        /// создание двумерного списка из элементов Person
+        /// </summary>
+        /// <returns></returns>
+        public static DoublyLinkedList<Person>? CreateDoublyLinkedList()
+        {
+            Person p1 = new Person();
+            p1.RandomInit();
+            DoublyLinkedList<Person>? newList = new DoublyLinkedList<Person>(p1);
+            Console.WriteLine("Впишите длину нового списка");
+            int len = ReadNumbers.ReadInt(1, 100); //ввод длины списка
+            for (int i = 0; i < len-1; i++) //заполнение списка элементами Person
+            {
+                Person p = new Person();
+                p.RandomInit();
+                newList.AddElement(p);
+            }
+            Console.WriteLine("Список был создан");
+            return newList;
+        }
+
+        /// <summary>
+        /// функция для клонирования и проверки клона
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static DoublyLinkedList<Person>? CreateCheckClone(DoublyLinkedList<Person> list)
+        {
+            DoublyLinkedList<Person> newList = (DoublyLinkedList<Person>)list.Clone();
+            Console.WriteLine("Изменим 1 элемент на Сергея в клонированном списке");
+            Person p1 = new Person("Сергей", "Мужской", 23);
+            newList.Beg.Data = p1;
+            list.ShowList();
+            Console.Write("Его клон, ");
+            return newList;
+        }
+
+
+        /// <summary>
         /// функция для работы с двунаправленным списком
         /// </summary>
         static void WorkingWithDoublyLinkedList()
         {
-            string textMenu = "1 - Cоздать новый двунаправленный список из объектов Person\n2 - Вывести список\n3 - Удалить последний элемент с заданным именем\n4 - Клонирование списка\n5 - \n6 - Завершить работу программы";
+            string textMenu = "1 - Cоздать новый двунаправленный список из объектов Person\n2 - Вывести список\n3 - Удалить последний элемент с заданным именем\n4 - Клонирование списка\n5 - Удалить список из памяти\n6 - Завершить работу программы";
             PrintMenu(textMenu);
-            DoublyLinkedList<Person>? list = new DoublyLinkedList<Person>(3); //создаем двунаправленный список
+            DoublyLinkedList<Person>? list = new DoublyLinkedList<Person>(new Person()); //создаем двунаправленный список объектов Person
             string? operationNumber;
             do
             {
@@ -83,28 +105,27 @@ namespace lab
                 switch (operationNumber)
                 {
                     case "1": //создание нового листа
-                        Console.WriteLine("Впишите длину нового списка");
-                        int len = ReadNumbers.ReadInt(1, 100);
-                        list = new DoublyLinkedList<Person>(len);
-                        Console.WriteLine("Список был создан");
-                        list.ShowList();
+                        list = CreateDoublyLinkedList();
+                        list?.ShowList();
                         PrintMenu(textMenu);
                         break;
                     case "2": //вывод списка
                         list?.ShowList();
                         break;
                     case "3": //удаление последнего элемента с заданным именем
-                        Console.WriteLine("Впишите имя человека, которого хотите удалить из списка");
-                        string? nameToDelete = Console.ReadLine();
-                        DeleteLastPersonByName(ref list, nameToDelete);
+                        DeleteLastPersonByName(ref list);
                         PrintMenu(textMenu);
+                        list?.ShowList();
                         break;
                     case "4": //клонирование списка
-                        //list = (DoublyLinkedList<Person>)list.Clone();
-                        //list.ShowList();
-                        //PrintMenu(textMenu);
+                        list = CreateCheckClone(list);
+                        list?.ShowList();
+                        PrintMenu(textMenu);
                         break;
-                    case "5": 
+                    case "5": //удалить список из памяти
+                        list?.RemoveListFromMemory();
+                        Console.WriteLine("Список был удален из памяти");
+                        PrintMenu(textMenu);
                         break;
                     default: //вывод ошибки при некорректном вводе
                         if (operationNumber != "6")
