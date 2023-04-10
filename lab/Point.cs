@@ -7,28 +7,28 @@ using ClassLibrary1;
 
 namespace lab
 {
-    public class Point
+    public class Point<T>
     {
-        public Person Person { get; set; }
-        public Point? Next {get; set;}
-        public Point? Prev { get; set; }
+        public Person? Data { get; set; }
+        public Point<T>? Next {get; set;}
+        public Point<T>? Prev { get; set; }
         public Point()
         {
-            Person = new Person();
+            Data = null;
             Next = null;
             Prev = null;
         }
 
         public Point(Person p)
         {
-            Person = p;
+            Data = p;
             Next = null;
             Prev = null;
         }
 
         public override string ToString()
         {
-            return Person + " ";
+            return Data + " ";
         }
     }
 }
