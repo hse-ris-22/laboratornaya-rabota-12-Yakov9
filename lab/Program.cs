@@ -31,7 +31,7 @@ namespace lab
                 Console.WriteLine("Ваш список пуст");
             Console.WriteLine("Впишите имя человека, которого хотите удалить из списка");
             string? name = Console.ReadLine(); //ввод имени человека для удаления
-            Point<Person>? p = list?.End;
+            PointList<Person>? p = list?.End;
             bool isFound = false;
             for (int i = list.Length; i > 0; i--, p = p?.Prev)
             {
@@ -95,7 +95,7 @@ namespace lab
         /// </summary>
         static void WorkingWithDoublyLinkedList()
         {
-            string textMenu = "1 - Cоздать новый двунаправленный список из объектов Person\n2 - Вывести список\n3 - Удалить последний элемент с заданным именем\n4 - Клонирование списка\n5 - Удалить список из памяти\n6 - Завершить работу программы";
+            string textMenu = "1 - Cоздать новый двунаправленный список из объектов Person\n2 - Вывести список\n3 - Удалить последний элемент с заданным именем\n4 - Клонирование списка\n5 - Удалить список из памяти\n6 - Назад в меню";
             PrintMenu(textMenu);
             DoublyLinkedList<Person>? list = new DoublyLinkedList<Person>(new Person()); //создаем двунаправленный список объектов Person
             string? operationNumber;
@@ -134,9 +134,65 @@ namespace lab
                 }
             } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
         }
+
+        /// <summary>
+        /// функция для работы с деревьями
+        /// </summary>
+        static void WorkingWithTrees()
+        {
+            string textMenu = "1 - Cоздать новое идеально сбалансированное дерево\n2 - Вывести дерево\n3 - \n4 - \n5 - \n6 - Назад в меню";
+            PrintMenu(textMenu);
+             //создаем идеально сбалансированное список дерево объектов Person
+            string? operationNumber;
+            do
+            {
+                operationNumber = Console.ReadLine();
+                switch (operationNumber)
+                {
+                    case "1": //создание нового идеально сбалансированного дерева
+                        PrintMenu(textMenu);
+                        break;
+                    case "2": //вывод списка
+                        break;
+                    case "3": //удаление последнего элемента с заданным именем
+                        PrintMenu(textMenu);
+                        break;
+                    case "4": //клонирование списка
+                        PrintMenu(textMenu);
+                        break;
+                    case "5": //удалить список из памяти
+                        PrintMenu(textMenu);
+                        break;
+                    default: //вывод ошибки при некорректном вводе
+                        if (operationNumber != "6")
+                            Console.WriteLine("\aВпишите номер операции (целое число от 1 до 6)!");
+                        break;
+                }
+            } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
+        }
         static void Main(string[] args)
         {
-            WorkingWithDoublyLinkedList();
+            string textMenu = "1 - Работа с двунаправленными списками\n2 - Работа с деревьями\n3-Завершить работу программы";
+            PrintMenu(textMenu);
+            string? operationNumber;
+            do
+            {
+                operationNumber = Console.ReadLine();
+                switch(operationNumber)
+                {
+                    case "1": //работа с двунаправленными списками
+                        WorkingWithDoublyLinkedList();
+                        PrintMenu(textMenu);
+                        break;
+                    case "2": //работа с деревьями
+                        PrintMenu(textMenu);
+                        break;
+                    default: //вывод ошибки при некорректном вводе
+                        if (operationNumber != "3")
+                            Console.WriteLine("\aВпишите номер операции (целое число от 1 до 3)!");
+                        break;
+                }
+            } while (operationNumber != "3"); //программа действует пока пользователь не введет 3
         }
     }
 }

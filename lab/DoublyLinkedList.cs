@@ -11,11 +11,26 @@ namespace lab
     public class DoublyLinkedList<T> where T : ICloneable
     {
         //первый элемент списка
-        public Point<T>? Beg { get; set; }
+        public PointList<T>? Beg { get; set; }
         //последний элемент списка
-        public Point<T>? End { get; set; }
+        public PointList<T>? End { get; set; }
         //длина списка
-        public int Length { get; set; }
+        public int length;
+
+        /// <summary>
+        /// правила для длины
+        /// </summary>
+        public int Length 
+        {
+            get => length;
+            set
+              {
+                if (value <= 0)
+                    length = 0;
+                else
+                    length = value;
+              }
+        }
 
 
         /// <summary>
@@ -25,14 +40,7 @@ namespace lab
         public DoublyLinkedList(T data)
         {
             Length = 1;
-            Point<T> beg = new Point<T>(data); //создаем первый элемент
-            //for (int i = 1; i < length; i++) //добавляем(присоединяем) остальные элементы
-            //{
-            //    Point<Person> p = MakePointPerson();
-            //    r.Next = p;
-            //    p.Prev = r;
-            //    r = p;
-            //}
+            PointList<T> beg = new PointList<T>(data); //создаем первый элемент
             Beg = beg;
             End = beg;
         }
@@ -43,8 +51,8 @@ namespace lab
         /// <param name="element"></param>
         public void AddElement(T element)
         {
-            Point<T>? p = new Point<T>(element);
-            Point<T>? t = this.End;
+            PointList<T>? p = new PointList<T>(element);
+            PointList<T>? t = this.End;
             this.End.Next = p;
             this.End = p;
             this.End.Prev = t;
@@ -55,7 +63,7 @@ namespace lab
         /// удаление элемента из списка
         /// </summary>
         /// <param name="p"></param>
-        public void DeleteElement(Point<T> p)
+        public void DeleteElement(PointList<T> p)
         {
             if (this.Length == 1) //удаление единственного элемента списка
             {
@@ -109,7 +117,7 @@ namespace lab
             else
             {
                 Console.WriteLine("Ваш список:");
-                Point<T>? p = Beg;
+                PointList<T>? p = Beg;
                 while (p!=null)
                 {
                     Console.WriteLine(p);
@@ -125,7 +133,7 @@ namespace lab
         public DoublyLinkedList<T> Clone()
         {
             DoublyLinkedList<T> newList = new DoublyLinkedList<T>((T)this.Beg.Data.Clone());
-            Point<T>? pOld = Beg.Next;
+            PointList<T>? pOld = Beg.Next;
             for (int i = 0; i < Length -1; i++, pOld = pOld.Next)
             {
                 newList.AddElement((T)pOld.Data.Clone());

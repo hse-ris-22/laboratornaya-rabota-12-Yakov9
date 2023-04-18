@@ -7,19 +7,19 @@ using ClassLibrary1;
 
 namespace lab
 {
-    public class Point<T>
+    public class PointList<T>
     {
         public T? Data { get; set; }
-        public Point<T>? Next {get; set;}
-        public Point<T>? Prev { get; set; }
-        public Point()
+        public PointList<T>? Next {get; set;}
+        public PointList<T>? Prev { get; set; }
+        public PointList()
         {
             Data = default(T);
             Next = null;
             Prev = null;
         }
 
-        public Point(T p)
+        public PointList(T p)
         {
             Data = p;
             Next = null;
