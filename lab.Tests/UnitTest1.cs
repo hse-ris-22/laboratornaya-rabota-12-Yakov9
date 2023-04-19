@@ -7,21 +7,21 @@ namespace lab.Tests
         [TestMethod]
         public void TestPoint1() //тест для конструктора Point без параметров
         {
-            Point<int> p = new Point<int>();
+            PointList<int> p = new PointList<int>();
             Assert.IsTrue(p.Data == 0 && p.Next == null && p.Prev == null);
         }
 
         [TestMethod]
         public void TestPoint2() //тест для конструктора Point c параметрами
         {
-            Point<int> p = new Point<int>(4);
+            PointList<int> p = new PointList<int>(4);
             Assert.IsTrue(p.Data == 4 && p.Next == null && p.Prev == null);
         }
 
         [TestMethod]
         public void TestPointToString() //тест перегрузки ToString для класса Point<>
         {
-            Point<int> p = new Point<int>(4);
+            PointList<int> p = new PointList<int>(4);
             Assert.IsTrue(p.ToString() == "4 ");
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Net;
 
 namespace lab
 {
@@ -135,14 +136,54 @@ namespace lab
             } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
         }
 
-        /// <summary>
-        /// функция для работы с деревьями
-        /// </summary>
-        static void WorkingWithTrees()
+        public static Tree<Person> CreateIdealTreeOfPeople()
         {
-            string textMenu = "1 - Cоздать новое идеально сбалансированное дерево\n2 - Вывести дерево\n3 - \n4 - \n5 - \n6 - Назад в меню";
+            Console.WriteLine("Создание нового идеально сбалансированного дерева.\nВпишите длину вашего дерева");
+            int l = ReadNumbers.ReadInt(1, 100);
+            Tree<Person> newTree = new Tree<Person>(l);
+            return newTree;
+        }
+
+        public static void FindPersonSmallestAge(PointTree<Person>? root)
+        {
+            Person? youngestPerson = root?.Data;
+            Stack<PointTree<Person>> inS = new Stack<PointTree<Person>>();
+            Stack<PointTree<Person>> outS = new Stack<PointTree<Person>>();
+            PointTree<Person> temp = new PointTree<Person>();
+            PointTree<Person> item = new PointTree<Person>();
+            if (root!=null)
+            {
+                inS.Push(root);
+                while (inS.Count>0)
+                {
+                    temp=inS.Pop();
+                    outS.Push(temp);
+                    if (temp.Left!=null) inS.Push(temp.Left);
+                    if (temp.Right!=null) inS.Push(temp.Right);
+                }
+                while (outS.Count>0)
+                {
+                    item=outS.Pop();
+                    if (item.Data?.Age < youngestPerson?.Age)
+                        youngestPerson = item.Data;
+                }
+                Console.WriteLine($"Человек с минимальным возрастом - {youngestPerson}");
+            }
+            else
+                Console.WriteLine("Дерево пустое");
+
+        }
+            /// <summary>
+            /// функция для работы с деревьями
+            /// </summary>
+            static void WorkingWithTrees()
+        {
+            string textMenu = "1 - Cоздать новое идеально сбалансированное дерево\n2 - Вывести дерево\n3 - Найти человека с минимальным возрастом\n4 - \n5 - \n6 - Назад в меню";
+            //создаем идеально сбалансированное дерево объектов Person
+            Tree<Person> tree = CreateIdealTreeOfPeople();
+            Console.WriteLine("Ваше дерево:");
+            Tree<Person>.ShowTree(tree.R, 3);
             PrintMenu(textMenu);
-             //создаем идеально сбалансированное список дерево объектов Person
             string? operationNumber;
             do
             {
@@ -150,14 +191,22 @@ namespace lab
                 switch (operationNumber)
                 {
                     case "1": //создание нового идеально сбалансированного дерева
+                        tree = CreateIdealTreeOfPeople();
+                        Console.WriteLine("Ваше дерево:");
+                        Tree<Person>.ShowTree(tree.R, 3);
                         PrintMenu(textMenu);
                         break;
-                    case "2": //вывод списка
-                        break;
-                    case "3": //удаление последнего элемента с заданным именем
+                    case "2": //вывод дерева
+                        Console.WriteLine("Ваше дерево:");
+                        Tree<Person>.ShowTree(tree.R, 3);
                         PrintMenu(textMenu);
+                        break;
+                    case "3": //Найти минимальный элемент в дереве (например элемент с минимальным возрастом).
+                        FindPersonSmallestAge(tree.R);
                         break;
                     case "4": //клонирование списка
+                        tree = tree.CreateSearchTree();
+                        Tree<Person>.ShowTree(tree.R, 3);
                         PrintMenu(textMenu);
                         break;
                     case "5": //удалить список из памяти
@@ -185,6 +234,7 @@ namespace lab
                         PrintMenu(textMenu);
                         break;
                     case "2": //работа с деревьями
+                        WorkingWithTrees();
                         PrintMenu(textMenu);
                         break;
                     default: //вывод ошибки при некорректном вводе
