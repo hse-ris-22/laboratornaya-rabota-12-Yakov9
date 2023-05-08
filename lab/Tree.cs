@@ -1,6 +1,7 @@
 ﻿using ClassLibrary1;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace lab
 {
-    public class Tree<T> where T : ICloneable, IInit, IComparable, new()
+    public class Tree<T> where T : ICloneable, IInit, IComparable<Person>, new()
     {
         public PointTree<T>? R { get; set; }
         public int size; //размер дерева
@@ -19,29 +20,35 @@ namespace lab
         public int Size
         {
             get => size;
-            set
-            {
-                if (value >= 0)
-                    size = value;
-                else
-                    size = 0;
-            }
         }
 
-        public Tree(int size)
+        /// <summary>
+        /// конструктор с 1 параметром - размер
+        /// </summary>
+        /// <param name="sizeOfTree"></param>
+        public Tree(int sizeOfTree)
         {
             PointTree<T>? point = null;
-            Size = size;
+            size = sizeOfTree;
             R = CreateIdealTree(Size, point);
             Console.WriteLine("СОЗДАНО");
         }
 
-        public Tree(PointTree<T> p, int size)
+        /// <summary>
+        /// конструктор с двумя параметрами размер и дата
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="sizeOfTree"></param>
+        public Tree(PointTree<T> p, int sizeOfTree)
         {
-            Size = size;
-            R = p;
+            size = sizeOfTree;
+            R = CreateIdealTree(Size, p);
         }
 
+        /// <summary>
+        /// рандомная инициализация объекта T
+        /// </summary>
+        /// <returns></returns>
         public static T GetInfo()
         {
             T? item = new T();
@@ -49,11 +56,17 @@ namespace lab
             return item;
         }
 
+        /// <summary>
+        /// создание идеально сбалансированного дерева
+        /// </summary>
+        /// <param name="size1"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public PointTree<T> CreateIdealTree(int size1, PointTree<T>? p)
         {
             int nl, nr;
             PointTree<T>? r;
-            if (size1==0) 
+            if (size1==0) //если размер равен нулю
             { 
                 p=null;
                 return p;
@@ -66,9 +79,15 @@ namespace lab
             return r;
         }
 
+        [ExcludeFromCodeCoverage]
+        /// <summary>
+        /// вывод дерева в консоли
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="l"></param>
         public static void ShowTree(PointTree<T>? p, int l)
         {
-            if (p!=null)
+            if (p!=null) //проверка элемента дерева
             {
                 ShowTree(p.Left, l+10);
                 for (int i = 0; i < l; i++)
@@ -78,22 +97,33 @@ namespace lab
             }
         }
 
-        public static PointTree<T> MakePoint(T d)
+        /// <summary>
+        /// создание элемента дерева с data типа Person
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static PointTree<Person> MakePoint(Person d) 
         {
-            PointTree<T> p = new PointTree<T>(d);
+            PointTree<Person> p = new PointTree<Person>(d);
             return p;
         }
 
-        public PointTree<T> Add(PointTree<T> root, T d)
+        /// <summary>
+        /// добавление элемента в дерево поиска
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public static PointTree<Person> Add(PointTree<Person> root, Person d)
         {
-            PointTree<T>? p = root;
-            PointTree<T>? r = null;
+            PointTree<Person>? p = root;
+            PointTree<Person>? r = null;
             bool ok = false;
             while (p!=null && !ok)
             {
                 r = p;
                 //if (d == p.Data)
-                if (d.Equals(p.Data))
+                if (d.CompareTo(p.Data) == 0)
                     ok = true;
                 //else if (d < p.Data) 
                 else if (d.CompareTo(p.Data) == -1)
@@ -101,7 +131,7 @@ namespace lab
                 else p = p.Right;
             }
             if (ok) return p;
-            PointTree<T> NewPoint = MakePoint(d);
+            PointTree<Person> NewPoint = Tree<Person>.MakePoint(d);
             //if (d < r.Data)
             if (d.CompareTo(r.Data) == -1)
                 r.Left = NewPoint;
@@ -109,16 +139,21 @@ namespace lab
             return root;
         }
 
-        public Tree<T> CreateSearchTree()
+        /// <summary>
+        /// создание дерева поиска из идеально сбалансированного дерева
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static Tree<Person> CreateSearchTree(Tree<Person> tree)
         {
-            PointTree<T>? newPoint = new PointTree<T>();
-            Stack<PointTree<T>> inS = new Stack<PointTree<T>>();
-            Stack<PointTree<T>> outS = new Stack<PointTree<T>>();
-            PointTree<T> temp = new PointTree<T>();
-            PointTree<T> item = new PointTree<T>();
-            if (this.R!=null)
+            if (tree.R!=null)
             {
-                inS.Push(this.R);
+                PointTree<Person>? newPoint = new PointTree<Person>(tree.R.Data);
+                Stack<PointTree<Person>> inS = new Stack<PointTree<Person>>();
+                Stack<PointTree<Person>> outS = new Stack<PointTree<Person>>();
+                PointTree<Person>? temp = new PointTree<Person>();
+                PointTree<Person>? item = new PointTree<Person>();
+                inS.Push(tree.R);
                 while (inS.Count>0)
                 {
                     temp=inS.Pop();
@@ -129,13 +164,27 @@ namespace lab
                 while (outS.Count>0)
                 {
                     item=outS.Pop();
-                    newPoint.Add(newPoint, (T)item.Data.Clone());
+                    newPoint = Tree<T>.Add(newPoint, (Person)item.Data.Clone());
                 }
+                Tree<Person> newTree = new Tree<Person>(newPoint, tree.Size);
+                Console.WriteLine("Дерево было трансформировано в дерево поиска.");
+                return newTree;
             }
             else
-                Console.WriteLine("Дерево пустое");
-            Tree<T> newTree = new Tree<T>(newPoint, this.Size);
-            return newTree;
+            {
+                Console.WriteLine("Дерево пустое, создайте новое дерево, нажав единицу");
+                return tree;
+            }
+        }
+
+        /// <summary>
+        /// удаление дерева из памяти
+        /// </summary>
+        public void RemoveTreeFromMemory()
+        {
+            this.R = null;
+            this.size = 0;
+            Console.WriteLine("Дерево было удалено из памяти.");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace lab
         //последний элемент списка
         public PointList<T>? End { get; set; }
         //длина списка
-        public int length;
+        int length;
 
         /// <summary>
         /// правила для длины
@@ -23,13 +23,13 @@ namespace lab
         public int Length 
         {
             get => length;
-            set
-              {
-                if (value <= 0)
-                    length = 0;
-                else
-                    length = value;
-              }
+            //set
+            //  {
+            //    if (value <= 0)
+            //        length = 0;
+            //    else
+            //        length = value;
+            //  }
         }
 
 
@@ -39,7 +39,7 @@ namespace lab
         /// <param name="length"></param>
         public DoublyLinkedList(T data)
         {
-            Length = 1;
+            length = 1;
             PointList<T> beg = new PointList<T>(data); //создаем первый элемент
             Beg = beg;
             End = beg;
@@ -56,7 +56,7 @@ namespace lab
             this.End.Next = p;
             this.End = p;
             this.End.Prev = t;
-            Length++;
+            length++;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace lab
                 p.Next.Prev = p?.Prev;
                 p.Prev.Next = p?.Next;
             }
-            Length--;
+            length--;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace lab
             this.End.Data = default(T);
             this.End.Next = null;
             this.End.Prev = null;
-            this.Length = 0;
+            this.length = 0;
         }
 
 

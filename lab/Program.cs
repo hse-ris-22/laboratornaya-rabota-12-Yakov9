@@ -81,13 +81,19 @@ namespace lab
         /// <returns></returns>
         public static DoublyLinkedList<Person>? CreateCheckClone(DoublyLinkedList<Person> list)
         {
-            DoublyLinkedList<Person> newList = (DoublyLinkedList<Person>)list.Clone();
-            Console.WriteLine("Изменим 1 элемент на Сергея в клонированном списке");
-            Person p1 = new Person("Сергей", "Мужской", 23);
-            newList.Beg.Data = p1;
-            list.ShowList();
-            Console.Write("Его клон, ");
-            return newList;
+            if (list.Length <= 0)
+            {
+                Console.WriteLine("Ваш список пуст, нажмите 1");
+                return list;
+            }
+                DoublyLinkedList<Person> newList = (DoublyLinkedList<Person>)list.Clone();
+                Console.WriteLine("Изменим 1 элемент на Сергея в клонированном списке");
+                Person p1 = new Person("Сергей", "Мужской", 23);
+                newList.Beg.Data = p1;
+                list.ShowList();
+                Console.Write("Его клон, ");
+                return newList;
+                
         }
 
 
@@ -112,6 +118,7 @@ namespace lab
                         break;
                     case "2": //вывод списка
                         list?.ShowList();
+                        PrintMenu(textMenu);
                         break;
                     case "3": //удаление последнего элемента с заданным именем
                         DeleteLastPersonByName(ref list);
@@ -136,6 +143,10 @@ namespace lab
             } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
         }
 
+        /// <summary>
+        /// функция для создания идеально сбалансированного дерева из элементов типа Person
+        /// </summary>
+        /// <returns></returns>
         public static Tree<Person> CreateIdealTreeOfPeople()
         {
             Console.WriteLine("Создание нового идеально сбалансированного дерева.\nВпишите длину вашего дерева");
@@ -144,6 +155,10 @@ namespace lab
             return newTree;
         }
 
+        /// <summary>
+        /// функция для нахождения человека с минимальным возрастом из дерева
+        /// </summary>
+        /// <param name="root"></param>
         public static void FindPersonSmallestAge(PointTree<Person>? root)
         {
             Person? youngestPerson = root?.Data;
@@ -164,21 +179,21 @@ namespace lab
                 while (outS.Count>0)
                 {
                     item=outS.Pop();
-                    if (item.Data?.Age < youngestPerson?.Age)
+                    if (item.Data?.Age < youngestPerson?.Age) //проверка возраста
                         youngestPerson = item.Data;
                 }
                 Console.WriteLine($"Человек с минимальным возрастом - {youngestPerson}");
             }
             else
-                Console.WriteLine("Дерево пустое");
-
+                Console.WriteLine("Дерево пустое, создайте новое, нажав единицу");
         }
-            /// <summary>
-            /// функция для работы с деревьями
-            /// </summary>
-            static void WorkingWithTrees()
+
+        /// <summary>
+        /// функция для работы с деревьями
+        /// </summary>
+        static void WorkingWithTrees()
         {
-            string textMenu = "1 - Cоздать новое идеально сбалансированное дерево\n2 - Вывести дерево\n3 - Найти человека с минимальным возрастом\n4 - \n5 - \n6 - Назад в меню";
+            string textMenu = "1 - Cоздать новое идеально сбалансированное дерево\n2 - Вывести дерево\n3 - Найти человека с минимальным возрастом\n4 - Преобразовать идеально сбалансированное дерево в дерево поиска\n5 - Удалить дерево из памяти\n6 - Назад в меню";
             //создаем идеально сбалансированное дерево объектов Person
             Tree<Person> tree = CreateIdealTreeOfPeople();
             Console.WriteLine("Ваше дерево:");
@@ -198,18 +213,21 @@ namespace lab
                         break;
                     case "2": //вывод дерева
                         Console.WriteLine("Ваше дерево:");
+                        if (tree.R == null)
+                            Console.WriteLine("Ваша дерево пустое, создайте новое, нажав единицу");
                         Tree<Person>.ShowTree(tree.R, 3);
                         PrintMenu(textMenu);
                         break;
                     case "3": //Найти минимальный элемент в дереве (например элемент с минимальным возрастом).
                         FindPersonSmallestAge(tree.R);
                         break;
-                    case "4": //клонирование списка
-                        tree = tree.CreateSearchTree();
+                    case "4": //преобразовать идеально сбалансированное дерево в дерево поиска
+                        tree = Tree<Person>.CreateSearchTree(tree);
                         Tree<Person>.ShowTree(tree.R, 3);
                         PrintMenu(textMenu);
                         break;
-                    case "5": //удалить список из памяти
+                    case "5": //удалить дерево из памяти
+                        tree.RemoveTreeFromMemory();
                         PrintMenu(textMenu);
                         break;
                     default: //вывод ошибки при некорректном вводе

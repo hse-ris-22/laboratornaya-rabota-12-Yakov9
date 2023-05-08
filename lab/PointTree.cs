@@ -29,7 +29,7 @@ namespace lab
 
         public override string ToString()
         {
-            return Data + "";
+            return Data + " ";
         }
     }
 }

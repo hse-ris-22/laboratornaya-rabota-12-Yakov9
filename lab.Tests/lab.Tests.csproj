@@ -18,4 +18,10 @@
     <ProjectReference Include="..\lab\lab.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ClassLibrary1">
+      <HintPath>..\..\лаб 10\ClassLibrary1\bin\Debug\net6.0\ClassLibrary1.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

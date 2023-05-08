@@ -1,25 +1,26 @@
 using lab;
+using ClassLibrary1;
 namespace lab.Tests
 {
     [TestClass]
     public class UnitTest1
     {
         [TestMethod]
-        public void TestPoint1() //тест для конструктора Point без параметров
+        public void TestPointList1() //тест для конструктора PointList без параметров
         {
             PointList<int> p = new PointList<int>();
             Assert.IsTrue(p.Data == 0 && p.Next == null && p.Prev == null);
         }
 
         [TestMethod]
-        public void TestPoint2() //тест для конструктора Point c параметрами
+        public void TestPointList2() //тест для конструктора PointList c параметрами
         {
             PointList<int> p = new PointList<int>(4);
             Assert.IsTrue(p.Data == 4 && p.Next == null && p.Prev == null);
         }
 
         [TestMethod]
-        public void TestPointToString() //тест перегрузки ToString для класса Point<>
+        public void TestPointListToString() //тест перегрузки ToString для класса PointList<>
         {
             PointList<int> p = new PointList<int>(4);
             Assert.IsTrue(p.ToString() == "4 ");
@@ -83,7 +84,7 @@ namespace lab.Tests
             list1.AddElement("второй");
             DoublyLinkedList<string> list2 = (DoublyLinkedList<string>)list1.Clone();
             list2.End.Data = "123";
-            Assert.IsTrue(list2.End.Data == "123" && list1.End.Data == "второй");
+            Assert.IsTrue(list2.End.Data == "123" && list1?.End?.Data == "второй");
         }
 
         [TestMethod]
@@ -92,7 +93,71 @@ namespace lab.Tests
             DoublyLinkedList<string> list1 = new DoublyLinkedList<string>("Проверка");
             list1.AddElement("второй");
             list1.RemoveListFromMemory();
-            Assert.IsTrue(list1.End.Data == null && list1.Beg.Data == null && list1.Beg.Next == null); ;
+            Assert.IsTrue(list1?.End?.Data == null && list1?.Beg?.Data == null && list1?.Beg?.Next == null); ;
+        }
+
+        [TestMethod]
+        public void TestPointTree1() //тест для конструктора PointTree без параметров
+        {
+            PointTree<int> p = new PointTree<int>();
+            Assert.IsTrue(p.Data == 0 && p.Right == null && p.Left == null);
+        }
+
+        [TestMethod]
+        public void TestPointTree2() //тест для конструктора PointTree c параметрами
+        {
+            PointTree<int> p = new PointTree<int>(4);
+            Assert.IsTrue(p.Data == 4 && p.Right == null && p.Left == null);
+        }
+
+        [TestMethod]
+        public void TestPointTreeToString() //тест перегрузки ToString для класса PointTree<>
+        {
+            PointTree<int> p = new PointTree<int>(4);
+            Assert.IsTrue(p.ToString() == "4 ");
+        }
+
+        [TestMethod]
+        public void TestTree1() //тест конструктора дерева с 1 параметром - size
+        {
+            Tree<Person> tree = new Tree<Person>(2);
+            Assert.IsTrue(tree?.size == 2);
+        }
+
+        [TestMethod]
+        public void TestTree2() //тест конструктора дерева с 2 параметрами 
+        {
+            Person per = new Person("Вася", "Мужской", 26);
+            PointTree<Person> p = new PointTree<Person>(per);
+            Tree<Person> tree = new Tree<Person>(p, 2);
+            Assert.IsTrue(tree?.size == 2);
+        }
+
+        [TestMethod]
+        public void TestSearchTree() //тест преобразования идеально сбалансированного дерева в дерево поиска
+        {
+            Person per1 = new Person("Ян", "Мужской", 30);
+            PointTree<Person> p = new PointTree<Person>(per1);
+            Tree<Person> tree = new Tree<Person>(p, 10);
+            tree = Tree<Person>.CreateSearchTree(tree);
+            Assert.IsTrue(tree?.R?.Left != null);
+        }
+
+        [TestMethod]
+        public void TestRemoveTreeFromMemory() //тест удаление дерева
+        {
+            Tree<Person> tree = new Tree<Person>(3);
+            tree.RemoveTreeFromMemory();
+            Assert.IsTrue(tree?.R == null && tree?.size == 0);
+        }
+
+        [TestMethod]
+        public void TestCreateSearchTreeEmpty() // тест создания дерева поиска при пустом дереве
+        {
+            Tree<Person> tree = new Tree<Person>(3);
+            tree.RemoveTreeFromMemory();
+            tree = Tree<Person>.CreateSearchTree(tree);
+            Assert.IsTrue(tree?.R == null && tree?.size == 0);
         }
     }
 }
