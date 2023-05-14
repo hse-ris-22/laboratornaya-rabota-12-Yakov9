@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace lab
 {
@@ -92,8 +93,7 @@ namespace lab
                 newList.Beg.Data = p1;
                 list.ShowList();
                 Console.Write("Его клон, ");
-                return newList;
-                
+                return newList; 
         }
 
 
@@ -140,7 +140,7 @@ namespace lab
                             Console.WriteLine("\aВпишите номер операции (целое число от 1 до 6)!");
                         break;
                 }
-            } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
+            } while (operationNumber != "6"); //цикл действует пока пользователь не введет 6
         }
 
         /// <summary>
@@ -235,11 +235,93 @@ namespace lab
                             Console.WriteLine("\aВпишите номер операции (целое число от 1 до 6)!");
                         break;
                 }
-            } while (operationNumber != "6"); //программа действует пока пользователь не введет 6
+            } while (operationNumber != "6"); //цикл действует пока пользователь не введет 6
         }
+
+        /// <summary>
+        /// создание новой хэш таблицы объектов Person
+        /// </summary>
+        /// <returns></returns>
+        public static HTable<Person> CreateHTable()
+        {
+            int size = ReadNumbers.ReadInt(1, 100000, "Впишите размер новой хэш таблицы");
+            Console.WriteLine("Хэш таблица создана");
+            return new HTable<Person>(size);
+        }
+
+        /// <summary>
+        /// добавление случайного человека (Person) в таблицу
+        /// </summary>
+        /// <param name="hTable"></param>
+        public static void AddRandomPeople(ref HTable<Person> hTable)
+        {
+            int numberOfElementsAdd = ReadNumbers.ReadInt(1, hTable.Size, "Впишите кол-во элементов, которые вы хотите добавить");
+            for (int i = 0; i < numberOfElementsAdd; i++)
+            {
+                Person p = new Person();
+                p.RandomInit();
+                if (hTable.Add(p))
+                Console.WriteLine("Элемент был добавлен.");
+            }
+        }
+
+        /// <summary>
+        /// функция для работы с хэш таблицами
+        /// </summary>
+        static void WorkingWithHashTables()
+        {
+            string textMenu = "1 - Cоздать новую хэш таблицу\n2 - Вывод хэш таблицы\n3 - Добавить элементы\n4 - Поиск элемента по ключу\n5 - Удаление элемента\n6 - Назад в меню";
+            PrintMenu(textMenu);
+            HTable<Person> hTable = new HTable<Person>();
+            string? operationNumber;
+            do
+            {
+                operationNumber = Console.ReadLine();
+                switch (operationNumber)
+                {
+                    case "1": //создать новую хэш таблицу
+                        hTable = CreateHTable();
+                        hTable.PrintHTable();
+                        PrintMenu(textMenu);
+                        break;
+                    case "2": //вывод хэш таблицы
+                        hTable.PrintHTable();
+                        PrintMenu(textMenu);
+                        break;
+                    case "3": //добавить элемент/ы
+                        AddRandomPeople(ref hTable);
+                        hTable.PrintHTable();
+                        PrintMenu(textMenu);
+                        break;
+                    case "4": //поиск элемента по ключу
+                        Person per1 = new Person();
+                        per1.Init();
+                        int indexIsFound = hTable.FindElement(per1);
+                        if (indexIsFound == -1) //проверка найден ли
+                            Console.WriteLine("Человек не был найден");
+                        else
+                            Console.WriteLine($"Человек был найден на {indexIsFound} месте");
+                        break;
+                    case "5": //удаление элемента
+                        Person per2 = new Person();
+                        per2.Init();
+                        if (hTable.DelElement(per2)) //был ли удален элемент
+                            Console.WriteLine("Элемент был удален");
+                        else
+                            Console.WriteLine("Элемент не был найден в хэш таблице");
+                        hTable.PrintHTable();
+                        break;
+                    default: //вывод ошибки при некорректном вводе
+                        if (operationNumber != "6")
+                            Console.WriteLine("\aВпишите номер операции (целое число от 1 до 6!)");
+                        break;
+                }
+            } while (operationNumber != "6"); //цикл действует пока пользователь не введет 6
+        }
+
         static void Main(string[] args)
         {
-            string textMenu = "1 - Работа с двунаправленными списками\n2 - Работа с деревьями\n3-Завершить работу программы";
+            string textMenu = "1 - Работа с двунаправленными списками\n2 - Работа с деревьями\n3 - Работа с хэш таблицами\n4 - Завершить работу программы";
             PrintMenu(textMenu);
             string? operationNumber;
             do
@@ -255,12 +337,16 @@ namespace lab
                         WorkingWithTrees();
                         PrintMenu(textMenu);
                         break;
+                    case "3": //работа с хэш таблицами
+                        WorkingWithHashTables();
+                        PrintMenu(textMenu);
+                        break;
                     default: //вывод ошибки при некорректном вводе
-                        if (operationNumber != "3")
-                            Console.WriteLine("\aВпишите номер операции (целое число от 1 до 3)!");
+                        if (operationNumber != "4")
+                            Console.WriteLine("\aВпишите номер операции (целое число от 1 до 4)!");
                         break;
                 }
-            } while (operationNumber != "3"); //программа действует пока пользователь не введет 3
+            } while (operationNumber != "4"); //программа действует пока пользователь не введет 4
         }
     }
 }

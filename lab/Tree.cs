@@ -141,7 +141,7 @@ namespace lab
 
         /// <summary>
         /// создание дерева поиска из идеально сбалансированного дерева
-        /// </summary>
+        /// </summary>      
         /// <param name="tree"></param>
         /// <returns></returns>
         public static Tree<Person> CreateSearchTree(Tree<Person> tree)

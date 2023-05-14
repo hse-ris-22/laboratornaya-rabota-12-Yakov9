@@ -159,5 +159,150 @@ namespace lab.Tests
             tree = Tree<Person>.CreateSearchTree(tree);
             Assert.IsTrue(tree?.R == null && tree?.size == 0);
         }
+
+        [TestMethod]
+        public void TestHTable() //тест для конструктора HTable
+        {
+            HTable<Person> table = new HTable<Person>();
+            Assert.AreEqual(table.Size, 30);
+        }
+
+        [TestMethod]
+        public void TestPointHTable() //тест для конструктора PointHTable
+        {
+            Person person = new Person();
+            person.Age = 30;
+            PointHTable<Person> point = new PointHTable<Person>(person);
+            Assert.AreEqual(point.value.Age, 30);
+        }
+
+
+        [TestMethod]
+        public void TestPointHTableToString() //тест преобразования PointHTable в string
+        {
+            Person person = new Person();
+            person.Age = 30;
+            PointHTable<Person> point = new PointHTable<Person>(person);
+            Assert.AreEqual(point.ToString(), "30:Имя NoName, пол Мужской, возраст 30");
+        }
+
+        [TestMethod]
+        public void AddElementTestHTable1() //тест добавления элементов в таблицу 1
+        {
+            HTable<Person> table = new HTable<Person>();
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            table.Add(person1);
+            Assert.IsTrue(table.table[20] != null);
+        }
+
+        [TestMethod]
+        public void AddElementTestHTable2() //тест добавления элементов в таблицу 2 (добавление элемента с уже существующим хэш кодом - возникновение коллизии)
+        {
+            HTable<Person> table = new HTable<Person>();
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            Person person2 = new Person();
+            person2.Name = "Вова";
+            person2.Age = 20;
+            table.Add(person1);
+            table.Add(person2);
+            Assert.IsTrue(table.table[20] != null && table.table[25] != null && table.table[20].value.Name == "Имя" && table.table[25].value.Name == "Вова");
+        }
+
+        [TestMethod]
+        public void AddElementTestHTable3() //тест добавления элементов в таблицу 3 (добавление элемента при заполненной хэш таблице)
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            Person person2 = new Person();
+            person2.Name = "Вова";
+            person2.Age = 20;
+            Person person3 = new Person();
+            person3.Name = "Катя";
+            person3.Age = 20;
+            table.Add(person1);
+            table.Add(person2);
+            Assert.IsFalse(table.Add(person3));
+        }
+
+        [TestMethod]
+        public void FindElementHTable1() //тест поиска элемента в хэш тейбл (нашел с 1 раза)
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            table.Add(person1);
+            Assert.IsFalse(table.FindElement(person1) == -1);
+        }
+
+        [TestMethod]
+        public void FindElementHTable2() //тест поиска элемента в хэш тейбл (нашел не с первого раза из-за коллизий)
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            Person person2 = new Person();
+            person2.Name = "Вова";
+            person2.Age = 20;
+            table.Add(person1);
+            table.Add(person2);
+            Assert.IsFalse(table.FindElement(person2) == -1);
+        }
+
+        [TestMethod]
+        public void FindElementHTable3() //тест поиска элемента в хэш тейбл (не нашел)
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            table.Add(person1);
+            Person person2 = new Person();
+            person2.Name = "Вова";
+            person2.Age = 20;
+            Assert.IsTrue(table.FindElement(person2) == -1);
+        }
+
+        [TestMethod]
+        public void DelElementHTable1() //тест удаления элемента из хэш тейбл (нашел с 1 раза и удалил)
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            table.Add(person1);
+            Assert.IsTrue(table.DelElement(person1));
+        }
+
+        [TestMethod]
+        public void DelElementHTable2() //тест удаления элемента из хэш тейбл (не удалил (цикл поиска сработал 1 раз))
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            Assert.IsFalse(table.DelElement(person1));
+        }
+
+        [TestMethod]
+        public void DelElementHTable3() //тест удаления элемента из хэш тейбл (не удалил (цикл поиска сработал более одного раза - коллизия))
+        {
+            HTable<Person> table = new HTable<Person>(10);
+            Person person1 = new Person();
+            person1.Name = "Имя";
+            person1.Age = 20;
+            table.Add(person1);
+            Person person2 = new Person();
+            person2.Name = "Вова";
+            person2.Age = 20;
+            Assert.IsFalse(table.DelElement(person2));
+        }
     }
 }
