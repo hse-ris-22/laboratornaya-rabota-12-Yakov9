@@ -39,10 +39,13 @@ namespace lab
         /// </summary>
         /// <param name="p"></param>
         /// <param name="sizeOfTree"></param>
-        public Tree(PointTree<T> p, int sizeOfTree)
+        public Tree(PointTree<T> p, int sizeOfTree, bool isSearchTree = false)
         {
             size = sizeOfTree;
-            R = CreateIdealTree(Size, p);
+            if (isSearchTree)
+                R = p;
+            else
+                R = CreateIdealTree(Size, p);
         }
 
         /// <summary>
@@ -131,11 +134,11 @@ namespace lab
                 else p = p.Right;
             }
             if (ok) return p;
-            PointTree<Person> NewPoint = Tree<Person>.MakePoint(d);
+            PointTree<Person>? newPoint = Tree<Person>.MakePoint(d);
             //if (d < r.Data)
-            if (d.CompareTo(r.Data) == -1)
-                r.Left = NewPoint;
-            else r.Right = NewPoint;
+            if (d.CompareTo(r?.Data) == -1)
+                r.Left = newPoint;
+            else r.Right = newPoint;
             return root;
         }
 
@@ -166,7 +169,7 @@ namespace lab
                     item=outS.Pop();
                     newPoint = Tree<T>.Add(newPoint, (Person)item.Data.Clone());
                 }
-                Tree<Person> newTree = new Tree<Person>(newPoint, tree.Size);
+                Tree<Person> newTree = new Tree<Person>(newPoint, tree.Size, true);
                 Console.WriteLine("Дерево было трансформировано в дерево поиска.");
                 return newTree;
             }
