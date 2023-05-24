@@ -188,6 +188,16 @@ namespace lab
                 Console.WriteLine("Дерево пустое, создайте новое, нажав единицу");
         }
 
+        public static void CheckCloneTree(Tree<Person> tree, Tree<Person> searchTree)
+        {
+            Console.WriteLine("Изменим имя первого на * Сергея");
+            searchTree.R.Data.Name = searchTree?.R?.Data?.Name?[0] + " Сергей";
+            Console.WriteLine("Старое:");
+            Tree<Person>.ShowTree(tree.R, 3);
+            Console.WriteLine("Новое:");
+            Tree<Person>.ShowTree(searchTree?.R, 3);
+        }
+
         /// <summary>
         /// функция для работы с деревьями
         /// </summary>
@@ -222,8 +232,9 @@ namespace lab
                         FindPersonSmallestAge(tree.R);
                         break;
                     case "4": //преобразовать идеально сбалансированное дерево в дерево поиска
-                        tree = Tree<Person>.CreateSearchTree(tree);
-                        Tree<Person>.ShowTree(tree.R, 3);
+                        Tree<Person> newTree = Tree<Person>.CreateSearchTree(tree);
+                        CheckCloneTree(tree, newTree);
+                        tree = newTree;
                         PrintMenu(textMenu);
                         break;
                     case "5": //удалить дерево из памяти
@@ -310,6 +321,7 @@ namespace lab
                         else
                             Console.WriteLine("Элемент не был найден в хэш таблице");
                         hTable.PrintHTable();
+                        PrintMenu(textMenu);
                         break;
                     default: //вывод ошибки при некорректном вводе
                         if (operationNumber != "6")

@@ -151,7 +151,7 @@ namespace lab
         {
             if (tree.R!=null)
             {
-                PointTree<Person>? newPoint = new PointTree<Person>(tree.R.Data);
+                PointTree<Person>? newPoint = new PointTree<Person>((Person)tree.R.Data.Clone());
                 Stack<PointTree<Person>> inS = new Stack<PointTree<Person>>();
                 Stack<PointTree<Person>> outS = new Stack<PointTree<Person>>();
                 PointTree<Person>? temp = new PointTree<Person>();

@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace lab
 {
-    public class HTable<T>
+    public class HTable<T> where T : ICloneable
     {
         public PointHTable<T>[] table;
-        public int Size { get; }
+        public int Size { get; set; }
 
         /// <summary>
         /// конструктор с параметром длины
@@ -32,8 +32,8 @@ namespace lab
         public bool Add(T item)
         {
             PointHTable<T> point = new PointHTable<T>(item);
-            if (item == null) return false;
             int index = Math.Abs(point.GetHashCode()) % Size;
+            int initialIndex = index;
             if (table[index] == null)
             {
                 table[index] = point;
@@ -41,8 +41,8 @@ namespace lab
             }
             else //в случае возникновения коллизии
             {
-                index += 5;
-                while (index < Size)
+                index = (index + 1) % Size;
+                while (index != (initialIndex - 1))
                 {
                     if (table[index] == null)
                     {
@@ -50,12 +50,30 @@ namespace lab
                         return true;
                     }
                     if (string.Compare(table[index].ToString(), point.ToString()) == 0) return false;
-                    index += 5;
+                    index = (index + 1) % Size;
                 }
-                Console.WriteLine("В хэш таблице недостаточно мест");
+                table = Rewrite().table;
+                Add(item);
+                Console.WriteLine("В хэш таблице недостаточно мест, она увеличена");
                 return false;
             }
         }
+
+        public HTable<T> Rewrite()
+        {
+            HTable<T> table2 = new HTable<T>(Size*2);
+            for (int i = 0; i < this.Size; i++)
+            {
+                if (table[i] == null) Console.WriteLine(i + " : ");
+                else
+                {
+                    table2.Add(table[i].value);
+                }
+            }
+            Size = Size*2;
+            return table2;
+        }
+
 
         [ExcludeFromCodeCoverage]
         /// <summary>
@@ -89,11 +107,12 @@ namespace lab
         {
             PointHTable<T> point1 = new PointHTable<T>(data);
             int code = Math.Abs(point1.GetHashCode()) % Size;
-            while (code < Size)
+            int initialCode = code;
+            while (code != (initialCode - 1))
             {
                 if (table[code] != null && String.Compare(table[code].value.ToString(), data.ToString()) == 0)
                     return code;
-                code += 5;
+                code = (code + 1) % Size;
             }
             return -1;
         }
@@ -107,15 +126,16 @@ namespace lab
         {
             PointHTable<T> point1 = new PointHTable<T>(data);
             int code = Math.Abs(point1.GetHashCode()) % Size;
+            int initialCode = code;
             if (table[code] == null) return false;
-            while (code < Size)
+            while (code != (initialCode-1))
             {
                 if (table[code] != null && String.Compare(table[code].value.ToString(), data.ToString()) == 0)
                 {
                     table[code] = null;
                     return true;
                 }
-                code += 5;
+                code = (code + 1) % Size;
             }
             return false;
         }
